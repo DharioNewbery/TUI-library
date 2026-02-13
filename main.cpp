@@ -47,16 +47,12 @@ int main() {
                         // Parse numbers manually or via sscanf
                         // (Pointer arithmetic simply skips "\033[<")
                         if (sscanf(&buf[i+3], "%d;%d;%d%c", &btn, &x, &y, &type) == 4) {
-                            screen.putChar(3, 3, type); // Draw
                             if (type == 'M') { // Mouse Press or Drag
-                                screen.putChar(x, y, '#'); // Draw
                                 screen.render(); // Re-render frame
                             }
                         }
-                        i = j; // Advance main loop past this sequence"
+                        i = j; // Advance main loop past this sequence
                     }
-                } else {
-                    for(size_t i=0; i<nread; i++) screen.putChar(i+2, 4, buf[i]);
                 }
             }
 
