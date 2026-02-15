@@ -6,11 +6,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "box.hpp"
-// --- Application Logic ---
+#include "Box.hpp"
 
+// --- Application Logic ---
 struct Screen {
-    int width, height;
+    size_t width, height;
     std::vector<std::vector<std::string>> buffer;
 
     Screen() {
@@ -18,6 +18,13 @@ struct Screen {
     }
 
     void updateSize() {
+        
+        #ifdef _WIN32
+            std::system("cls"); // Clear screen before writing (optional, can be removed for better performance)
+        #else
+            std::system("clear"); // Clear screen before writing (optional, can be removed for better performance)
+        #endif
+
         getWindowSize(width, height);
         // Ensure strictly positive dimensions
         if (width <= 0) width = 80;

@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include "Character.hpp"
 #include "Screen.hpp"
+#include "Elements.hpp"
 
 // --- Platform Specific Includes and Definitions ---
 

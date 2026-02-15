@@ -77,7 +77,7 @@ void enableRawMode() {
     std::cout << "\033[?1002h\033[?1006h\033[?25l" << std::flush;
 }
 
-void getWindowSize(int &width, int &height) {
+void getWindowSize(size_t &width, size_t &height) {
     #ifdef _WIN32
         CONSOLE_SCREEN_BUFFER_INFO csbi;
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);

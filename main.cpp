@@ -4,27 +4,41 @@ int main() {
     enableRawMode();
     Screen screen;
 
-    Character myChar;
+    screen.updateSize();
+    Terminal terminal(screen);
+    Canvas canva1(screen.width - 4, screen.height - 4, screen);
+    canva1.setArrangement(Arrangement::VERTICAL);
     
-    Box outline(screen.width - 1, screen.height - 1);
-    myChar.setConstrains(screen.width - 1, screen.height - 1);
-    myChar.setPos(screen.width / 2, screen.height / 2);
-    
+    terminal.addChild(&canva1);
+
+    Canvas *c;
+    for (int i = 0; i < 4; i++) {
+        Row *row = new Row(0, 10, screen);
+
+        for (int j = 1; j <= i + 1; j++) {
+            c = new Canvas(5 + i, 5 + i, screen);
+            row->addChild(c);
+        }
+
+        canva1.addChild(row);
+        row->fillMaxWidth();
+        Text *t = new Text(0, 0, screen, "something something...");
+        Spacer *s = new Spacer(1, 0, screen);
+        row->addChild(s);
+        row->addChild(t);
+    }
+
     char buf[1024];
 
     while (true) {
-        
-        // check if size has changed before expensive updateSize method so dynamic elements can be rendered
-        if (false)
+
+        size_t deltaW, deltaH;
+        getWindowSize(deltaW, deltaH);
+        if (deltaW != screen.width || deltaH != screen.height) {
             screen.updateSize();
+        }
 
-        outline.width = screen.width - 1;
-        outline.height = screen.height - 1;
-        screen.putBox(1, 1, outline);
-
-        screen.putChar(myChar.posX, myChar.posY, ' ');
-        myChar.update();
-        screen.putChar(myChar.posX, myChar.posY, '@');
+        terminal.update();
 
         // READ INPUT
         int nread = readInput(buf, sizeof(buf));
@@ -33,41 +47,10 @@ int main() {
             // Quit on 'q'
             for(int i=0; i<nread; i++) {
                 if (buf[i] == 'q') exit(0);
-                
-                if (buf[i] == '\033' && nread - i > 5) { // Simple safety check
-                    // Look for Mouse Sequence: \033[<...
-                    if (buf[i+1] == '[' && buf[i+2] == '<') {
-                        int btn, x, y;
-                        char type;
-                        
-                        // Find the end of the sequence 'M' or 'm'
-                        int j = i + 3;
-                        while (j < nread && buf[j] != 'M' && buf[j] != 'm') j++;
-
-                        // Parse numbers manually or via sscanf
-                        // (Pointer arithmetic simply skips "\033[<")
-                        if (sscanf(&buf[i+3], "%d;%d;%d%c", &btn, &x, &y, &type) == 4) {
-                            if (type == 'M') { // Mouse Press or Drag
-                                screen.render(); // Re-render frame
-                            }
-                        }
-                        i = j; // Advance main loop past this sequence
-                    }
-                }
             }
-
-            if (buf[0] == 'w') myChar.up();
-            if (buf[0] == 's') myChar.down();
-            if (buf[0] == 'a') myChar.left();
-            if (buf[0] == 'd') myChar.right();
-
-            // Example: Print input at top left for debug
-            screen.buffer[10][10] = buf[0];
         }
-
         screen.render();
-        
-        sleepMs(10); // Sleep 10ms (approx 100 FPS cap)
+        sleepMs(33); // Sleep 10ms (approx 100 FPS cap)
     }
     return 0;
 }
