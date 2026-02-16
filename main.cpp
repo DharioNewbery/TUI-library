@@ -1,32 +1,32 @@
 #include "main.hpp"
 
+Column* drawColumn(std::initializer_list<Element*> list = {}) {
+    return new Column(0, 0, list);
+}
+
+Row* drawRow(std::initializer_list<Element*> list = {}) {
+    return new Row(0, 0, list);
+}
+
+Canvas* drawCanvas(std::initializer_list<Element*> list = {}) {
+    return new Canvas(0, 0, list);
+}
+
+
 int main() {
     enableRawMode();
-    Screen screen;
+    Screen screen = Screen();
 
-    screen.updateSize();
-    Terminal terminal(screen);
-    Canvas canva1(screen.width - 4, screen.height - 4, screen);
-    canva1.setArrangement(Arrangement::VERTICAL);
-    
-    terminal.addChild(&canva1);
+    Terminal terminal(&screen, {
+        drawColumn({
+            drawColumn({
+                drawCanvas()->size(10, 5),
+                drawCanvas()->size(10, 5),
+                drawRow()->fillMaxWidth()->height(5)
+            })->fillMaxSize()
+        })->fillMaxSize()
+    });
 
-    Canvas *c;
-    for (int i = 0; i < 4; i++) {
-        Row *row = new Row(0, 10, screen);
-
-        for (int j = 1; j <= i + 1; j++) {
-            c = new Canvas(5 + i, 5 + i, screen);
-            row->addChild(c);
-        }
-
-        canva1.addChild(row);
-        row->fillMaxWidth();
-        Text *t = new Text(0, 0, screen, "something something...");
-        Spacer *s = new Spacer(1, 0, screen);
-        row->addChild(s);
-        row->addChild(t);
-    }
 
     char buf[1024];
 
