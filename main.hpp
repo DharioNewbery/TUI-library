@@ -8,7 +8,6 @@
 #include <sstream>
 #include <cmath>
 #include <cstdlib>
-#include "Character.hpp"
 #include "Screen.hpp"
 #include "Elements.hpp"
 
